@@ -1,0 +1,4 @@
+interface:
+  display_name: "Jewelary System"
+  short_description: "Project-wide guidance for the Jewelary monorepo"
+  default_prompt: "Use $jewelary-system to plan and execute work in this luxury e-commerce monorepo."

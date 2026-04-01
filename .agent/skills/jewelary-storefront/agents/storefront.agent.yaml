@@ -1,0 +1,4 @@
+interface:
+  display_name: "Jewelary Storefront"
+  short_description: "Next.js luxury storefront guidance for Jewelary"
+  default_prompt: "Use $jewelary-storefront to modify the Jewelary Next.js storefront safely and elegantly."

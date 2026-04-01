@@ -1,0 +1,4 @@
+interface:
+  display_name: "Jewelary Backend"
+  short_description: "Express Prisma Stripe guidance for Jewelary API"
+  default_prompt: "Use $jewelary-backend to work on the Jewelary Express, Prisma, and Stripe backend."

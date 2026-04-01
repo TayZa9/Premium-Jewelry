@@ -1,0 +1,38 @@
+# dependencies
+node_modules
+/node_modules
+frontend/node_modules
+backend/node_modules
+
+# testing
+/coverage
+
+# next.js
+/.next/
+frontend/.next/
+/out/
+
+# production
+/build
+backend/dist
+
+# misc
+.DS_Store
+*.pem
+*.log*
+
+# env files
+.env*
+frontend/.env*
+backend/.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# IDEs
+.idea
+.vscode
