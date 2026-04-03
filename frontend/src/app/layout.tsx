@@ -1,19 +1,25 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Montserrat, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { CartProvider } from "@/context/CartContext";
+import { AuthProvider } from "@/context/AuthContext";
 import CartSlideOver from "@/components/cart/CartSlideOver";
+import AuthModal from "@/components/auth/AuthModal";
+import SmoothScroll from "@/components/layout/SmoothScroll";
 
-const inter = Inter({
+import { ThemeProvider } from "@/components/layout/ThemeProvider";
+
+const montserrat = Montserrat({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-sans",
 });
 
-const playfair = Playfair_Display({
+const cormorant = Cormorant_Garamond({
+  weight: ["300", "400", "500", "600", "700"],
   subsets: ["latin"],
-  variable: "--font-playfair",
+  variable: "--font-serif",
 });
 
 export const metadata: Metadata = {
@@ -29,17 +35,30 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${playfair.variable} h-full antialiased`}
+      className={`${montserrat.variable} ${cormorant.variable} antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground">
-        <CartProvider>
-          <Header />
-          <CartSlideOver />
-          <main className="flex-grow pt-[88px]">
-            {children}
-          </main>
-          <Footer />
-        </CartProvider>
+      <body className="flex flex-col bg-background text-foreground selection:bg-gold selection:text-black min-h-screen">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SmoothScroll>
+            <AuthProvider>
+              <CartProvider>
+                <Header />
+                <CartSlideOver />
+                <AuthModal />
+                <main className="flex-grow pt-[88px]">
+                  {children}
+                </main>
+                <Footer />
+              </CartProvider>
+            </AuthProvider>
+          </SmoothScroll>
+        </ThemeProvider>
       </body>
     </html>
   );

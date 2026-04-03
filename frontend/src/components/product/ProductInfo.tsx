@@ -43,11 +43,11 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         <h1 className="text-3xl font-serif tracking-widest text-foreground font-light mb-2">{product.name}</h1>
         <p className="text-2xl font-serif italic text-primary mb-8">{product.price}</p>
         
-        <div className="prose prose-sm text-gray-500 font-light tracking-wide mb-10 leading-relaxed">
+        <div className="prose prose-sm text-gray-400 font-light tracking-wide mb-10 leading-relaxed">
           <p>{product.description}</p>
         </div>
 
-        <div className="space-y-4 border-y border-gray-100 py-6 mb-10">
+        <div className="space-y-4 border-y border-white/10 py-6 mb-10">
           <div className="flex justify-between items-center text-sm">
             <span className="text-gray-400 tracking-wider">Material</span>
             <span className="text-foreground font-medium tracking-wide">{product.material}</span>

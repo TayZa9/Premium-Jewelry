@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function StoresPage() {
   return (
-    <div className="bg-white min-h-[calc(100vh-88px)] py-24">
+    <div className="bg-background min-h-[calc(100vh-88px)] py-24">
       <div className="max-w-3xl mx-auto px-4 text-center">
         <h1 className="text-4xl font-serif tracking-widest text-foreground mb-12 uppercase font-light">Our Boutiques</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 text-sm tracking-widest text-gray-600">

@@ -31,7 +31,7 @@ export default function ProductGrid() {
             key={cat}
             onClick={() => setFilter(cat)}
             className={`text-sm tracking-widest uppercase transition-colors duration-300 pb-1 border-b-2 ${
-              filter === cat ? 'border-primary text-primary' : 'border-transparent text-gray-500 hover:text-foreground'
+              filter === cat ? 'border-primary text-primary' : 'border-transparent text-gray-400 hover:text-foreground'
             }`}
           >
             {cat}

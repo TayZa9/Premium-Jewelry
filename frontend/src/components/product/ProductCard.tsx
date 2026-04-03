@@ -18,7 +18,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <div className="group flex flex-col cursor-pointer">
       <Link href={`/products/${product.slug}`}>
-        <div className="relative aspect-[4/5] bg-gray-50 mb-4 overflow-hidden">
+        <div className="relative aspect-[4/5] bg-surface mb-4 overflow-hidden border border-border group-hover:border-primary/20 transition-colors">
           <Image
             src={product.image}
             alt={product.name}

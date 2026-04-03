@@ -76,21 +76,22 @@ async function getProduct(slug: string) {
   return products[slug] || null;
 }
 
-export default async function ProductDetailPage({ params }: { params: { slug: string } }) {
-  const product = await getProduct(params.slug);
+export default async function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const product = await getProduct(slug);
 
   if (!product) {
     notFound();
   }
 
   return (
-    <div className="bg-white min-h-[calc(100vh-88px)]">
+    <div className="bg-background min-h-[calc(100vh-88px)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-24">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
           <div className="col-span-1">
              <ProductImageGallery images={product.images} />
           </div>
-          <div className="col-span-1 border-l-0 md:border-l border-gray-100">
+          <div className="col-span-1 border-l-0 md:border-l border-white/10">
              <ProductInfo product={product} />
           </div>
         </div>

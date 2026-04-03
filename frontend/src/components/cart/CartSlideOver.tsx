@@ -20,10 +20,10 @@ export default function CartSlideOver() {
       />
       
       {/* Slide-over panel */}
-      <div className="fixed top-0 right-0 h-[100dvh] z-50 w-full max-w-md bg-white shadow-2xl flex flex-col transform transition-transform duration-300 ease-in-out">
+      <div className="fixed top-0 right-0 h-[100dvh] z-50 w-full max-w-md bg-background shadow-2xl flex flex-col transform transition-transform duration-300 ease-in-out">
         
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <h2 className="text-lg font-serif tracking-widest text-foreground">YOUR BAG ({items.length})</h2>
           <button 
             onClick={() => setIsCartOpen(false)}
@@ -38,7 +38,7 @@ export default function CartSlideOver() {
           {items.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
               <ShoppingBag size={48} strokeWidth={1} className="text-gray-300" />
-              <p className="text-gray-500 font-light tracking-wide">Your shopping bag is empty.</p>
+              <p className="text-gray-400 font-light tracking-wide">Your shopping bag is empty.</p>
               <button 
                 onClick={() => setIsCartOpen(false)}
                 className="mt-4 border border-foreground px-8 py-3 text-sm tracking-widest hover:bg-foreground hover:text-white transition-colors"
@@ -49,7 +49,7 @@ export default function CartSlideOver() {
           ) : (
             items.map((item) => (
               <div key={item.sku} className="flex gap-4">
-                <div className="relative w-24 h-32 bg-gray-50 flex-shrink-0">
+                <div className="relative w-24 h-32 bg-surface flex-shrink-0">
                   <Image src={item.image} alt={item.name} fill className="object-cover object-center" />
                 </div>
                 <div className="flex flex-col justify-between flex-1 py-1">
@@ -62,10 +62,10 @@ export default function CartSlideOver() {
                       {typeof item.price === 'string' ? item.price : `$${item.price.toLocaleString()}`}
                     </p>
                   </div>
-                  <div className="flex items-center border border-gray-200 w-fit">
-                    <button onClick={() => updateQuantity(item.sku, item.quantity - 1)} className="px-3 py-1 hover:bg-gray-50"><Minus size={14} /></button>
+                  <div className="flex items-center border border-border w-fit">
+                    <button onClick={() => updateQuantity(item.sku, item.quantity - 1)} className="px-3 py-1 hover:bg-muted"><Minus size={14} /></button>
                     <span className="px-3 py-1 text-sm text-foreground">{item.quantity}</span>
-                    <button onClick={() => updateQuantity(item.sku, item.quantity + 1)} className="px-3 py-1 hover:bg-gray-50"><Plus size={14} /></button>
+                    <button onClick={() => updateQuantity(item.sku, item.quantity + 1)} className="px-3 py-1 hover:bg-muted"><Plus size={14} /></button>
                   </div>
                 </div>
               </div>
@@ -75,16 +75,16 @@ export default function CartSlideOver() {
 
         {/* Footer */}
         {items.length > 0 && (
-          <div className="border-t border-gray-100 p-6 bg-gray-50">
+          <div className="border-t border-border p-6 bg-surface">
             <div className="flex justify-between items-center mb-6">
-              <span className="text-sm tracking-widest text-gray-500 uppercase">Subtotal</span>
+              <span className="text-sm tracking-widest text-gray-400 uppercase">Subtotal</span>
               <span className="text-lg font-serif italic text-foreground">${cartTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
             <p className="text-xs text-gray-400 mb-6 text-center tracking-wide">Taxes and shipping calculated at checkout</p>
             <Link 
               href="/checkout"
               onClick={() => setIsCartOpen(false)}
-              className="block w-full bg-foreground text-white py-4 text-center text-sm tracking-widest hover:bg-black transition-colors"
+              className="block w-full bg-foreground text-background py-4 text-center text-sm tracking-widest hover:opacity-90 transition-all font-medium"
             >
               PROCEED TO CHECKOUT
             </Link>

@@ -90,7 +90,7 @@ export default function CheckoutPage() {
   }, [items, router]);
 
   return (
-    <div className="bg-gray-50 min-h-screen pt-12 pb-24">
+    <div className="bg-[#1a1a1a] min-h-screen pt-12 pb-24">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h1 className="text-3xl font-serif tracking-widest text-foreground">CHECKOUT</h1>
@@ -98,9 +98,9 @@ export default function CheckoutPage() {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           {/* Order Summary */}
-          <div className="bg-white p-8 border border-gray-100 shadow-sm rounded-sm">
+          <div className="bg-background p-8 border border-white/10 shadow-sm rounded-sm">
             <h2 className="text-lg font-medium tracking-wide mb-6">Order Summary</h2>
-            <div className="space-y-4 mb-6 border-b border-gray-100 pb-6">
+            <div className="space-y-4 mb-6 border-b border-white/10 pb-6">
               {items.map(item => (
                 <div key={item.sku} className="flex justify-between text-sm">
                   <span className="text-gray-600 truncate mr-4">{item.quantity}x {item.name}</span>
@@ -117,14 +117,14 @@ export default function CheckoutPage() {
           </div>
 
           {/* Payment Form */}
-          <div className="bg-white p-8 border border-gray-100 shadow-sm rounded-sm">
+          <div className="bg-background p-8 border border-white/10 shadow-sm rounded-sm">
             <h2 className="text-lg font-medium tracking-wide mb-6">Payment Method</h2>
             {clientSecret ? (
               <Elements stripe={stripePromise} options={{ clientSecret }}>
                 <CheckoutForm clientSecret={clientSecret} />
               </Elements>
             ) : (
-              <div className="text-center py-10 bg-gray-50 text-sm text-gray-500 rounded border border-dashed border-gray-300">
+              <div className="text-center py-10 bg-[#1a1a1a] text-sm text-gray-400 rounded border border-dashed border-gray-300">
                 <p>Waiting for secure Stripe payment intent...</p>
                 <p className="mt-2 text-xs">(Requires valid STRIPE_SECRET_KEY in backend & Auth Token)</p>
               </div>

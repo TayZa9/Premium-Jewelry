@@ -48,7 +48,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-16 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-xs text-gray-500">&copy; {new Date().getFullYear()} AURA JEWELRY. All rights reserved.</p>
+          <p className="text-xs text-gray-400">&copy; {new Date().getFullYear()} AURA JEWELRY. All rights reserved.</p>
           <div className="flex space-x-6 mt-4 md:mt-0 text-gray-400">
             <a href="#" className="hover:text-white transition-colors" aria-label="Mail"><Mail size={20} strokeWidth={1.5} /></a>
             <a href="#" className="hover:text-white transition-colors" aria-label="Location"><MapPin size={20} strokeWidth={1.5} /></a>

@@ -28,7 +28,7 @@ export default function ProductImageGallery({ images }: GalleryProps) {
           <button 
             key={idx}
             onClick={() => setMainImage(img)}
-            className={`relative w-20 h-24 flex-shrink-0 bg-gray-50 border transition-all ${mainImage === img ? 'border-primary' : 'border-transparent hover:border-gray-300'}`}
+            className={`relative w-20 h-24 flex-shrink-0 bg-surface border transition-all ${mainImage === img ? 'border-primary' : 'border-border hover:border-border/80'}`}
           >
             <Image src={img} alt="Thumbnail" fill className="object-cover" />
           </button>
@@ -37,7 +37,7 @@ export default function ProductImageGallery({ images }: GalleryProps) {
 
       {/* Main Image */}
       <div 
-        className="relative aspect-[4/5] w-full bg-gray-50 cursor-zoom-in overflow-hidden"
+        className="relative aspect-[4/5] w-full bg-surface cursor-zoom-in overflow-hidden border border-border"
         onMouseEnter={() => setIsZoomed(true)}
         onMouseLeave={() => setIsZoomed(false)}
         onMouseMove={handleMouseMove}
