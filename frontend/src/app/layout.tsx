@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
 import { Montserrat, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
 import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
-import CartSlideOver from "@/components/cart/CartSlideOver";
-import AuthModal from "@/components/auth/AuthModal";
-import SmoothScroll from "@/components/layout/SmoothScroll";
-
+import { WishlistProvider } from "@/context/WishlistContext";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
+import SmoothScroll from "@/components/layout/SmoothScroll";
+import LayoutShell from "@/components/layout/LayoutShell";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -47,15 +44,13 @@ export default function RootLayout({
         >
           <SmoothScroll>
             <AuthProvider>
-              <CartProvider>
-                <Header />
-                <CartSlideOver />
-                <AuthModal />
-                <main className="flex-grow pt-[88px]">
-                  {children}
-                </main>
-                <Footer />
-              </CartProvider>
+              <WishlistProvider>
+                <CartProvider>
+                  <LayoutShell>
+                    {children}
+                  </LayoutShell>
+                </CartProvider>
+              </WishlistProvider>
             </AuthProvider>
           </SmoothScroll>
         </ThemeProvider>

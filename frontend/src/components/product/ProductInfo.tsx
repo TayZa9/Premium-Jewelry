@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { ShoppingBag } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useCart } from '@/context/CartContext';
+import WishlistButton from '@/components/wishlist/WishlistButton';
 
 interface ProductInfoProps {
   product: {
@@ -64,14 +65,31 @@ export default function ProductInfo({ product }: ProductInfoProps) {
           </div>
         </div>
 
-        <button 
-          onClick={handleAddToCart}
-          disabled={isAdding}
-          className="w-full bg-foreground text-white py-4 flex items-center justify-center space-x-2 text-sm tracking-widest hover:bg-black transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
-        >
-          <ShoppingBag size={18} strokeWidth={1.5} />
-          <span>{isAdding ? 'ADDING TO CART...' : 'ADD TO CART'}</span>
-        </button>
+        <div className="flex gap-3">
+          <button 
+            onClick={handleAddToCart}
+            disabled={isAdding}
+            className="flex-1 bg-foreground text-white py-4 flex items-center justify-center space-x-2 text-sm tracking-widest hover:bg-black transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+          >
+            <ShoppingBag size={18} strokeWidth={1.5} />
+            <span>{isAdding ? 'ADDING TO CART...' : 'ADD TO CART'}</span>
+          </button>
+
+          <div className="flex items-center justify-center w-14 border border-border hover:border-primary/50 transition-colors">
+            <WishlistButton
+              product={{
+                id: product.id,
+                name: product.name,
+                slug: '',
+                price: product.price,
+                images: product.images,
+                material: product.material,
+                gemstone: product.gemstone,
+              }}
+              size={22}
+            />
+          </div>
+        </div>
 
         <div className="mt-8 text-xs text-gray-400 text-center tracking-wider space-y-2">
           <p>Complimentary shipping & returns on all orders.</p>

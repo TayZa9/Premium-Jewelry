@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
+import WishlistButton from '@/components/wishlist/WishlistButton';
 
 const MOCK_FEATURED = [
   {
@@ -11,16 +12,38 @@ const MOCK_FEATURED = [
     name: 'The Emerald Cut Diamond Ring',
     price: '$12,500',
     image: '/images/ring.png',
-    slug: 'emerald-cut-diamond-ring'
+    slug: 'emerald-cut-diamond-ring',
+    material: '18k White Gold',
+    gemstone: 'Diamond',
   },
   {
     id: '2',
     name: 'Minimalist Gold Pendant',
     price: '$2,100',
     image: '/images/necklace.png',
-    slug: 'minimalist-gold-pendant'
+    slug: 'minimalist-gold-pendant',
+    material: '18k Yellow Gold',
   }
 ];
+
+const staggerContainer = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.2,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const staggerItem = {
+  hidden: { opacity: 0, y: 80 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
+  },
+};
 
 export default function FeaturedProducts() {
   const containerRef = useRef(null);
@@ -45,30 +68,66 @@ export default function FeaturedProducts() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="w-16 h-[1px] bg-gold mx-auto mt-8 origin-center"
           ></motion.div>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="text-sm text-muted-foreground tracking-widest uppercase mt-6 max-w-md mx-auto"
+          >
+            Handcrafted masterpieces for the discerning collector
+          </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-16">
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-16"
+        >
           {MOCK_FEATURED.map((product, index) => {
             const isEven = index % 2 === 0;
             return (
               <motion.div 
                 key={product.id}
-                initial={{ opacity: 0, y: 100 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                variants={staggerItem}
                 className={`group md:col-span-6 ${!isEven ? 'md:mt-32' : ''}`}
               >
-                <Link href={`/products/${product.slug}`} className="block">
+                <Link href={`/products/${product.slug}`} className="block relative">
                   <div className="relative aspect-[3/4] overflow-hidden bg-surface mb-8 border border-border group-hover:border-primary/50 transition-colors duration-500">
-                    <Image
-                      src={product.image}
-                      alt={product.name}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                      className="object-cover object-center transition-all duration-1000 ease-out group-hover:scale-105 group-hover:brightness-110"
-                    />
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                      className="relative w-full h-full"
+                    >
+                      <Image
+                        src={product.image}
+                        alt={product.name}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        className="object-cover object-center transition-all duration-1000 ease-out group-hover:brightness-110"
+                      />
+                    </motion.div>
                     <div className="absolute inset-0 bg-gold mix-blend-overlay opacity-0 group-hover:opacity-10 transition-opacity duration-1000"></div>
+
+                    {/* Wishlist button */}
+                    <div className="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="bg-background/80 backdrop-blur-sm rounded-full p-2 border border-border/50 shadow-lg">
+                        <WishlistButton
+                          product={{
+                            id: product.id,
+                            name: product.name,
+                            slug: product.slug,
+                            price: product.price,
+                            images: [product.image],
+                            material: product.material,
+                            gemstone: product.gemstone,
+                          }}
+                          size={18}
+                        />
+                      </div>
+                    </div>
                   </div>
                   <div className="text-center">
                     <h3 className="text-xl font-serif tracking-wide text-foreground mb-3 group-hover:text-gold transition-colors duration-300">{product.name}</h3>
@@ -78,7 +137,7 @@ export default function FeaturedProducts() {
               </motion.div>
             );
           })}
-        </div>
+        </motion.div>
         
         <motion.div 
           initial={{ opacity: 0, y: 30 }}

@@ -3,17 +3,23 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ShoppingBag, Search, User, Menu, X } from 'lucide-react';
+import { ShoppingBag, Search, User, Menu, X, Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
+import { useWishlist } from '@/context/WishlistContext';
 import ThemeToggle from './ThemeToggle';
 
-export default function Header() {
+interface HeaderProps {
+  onSearchOpen?: () => void;
+}
+
+export default function Header({ onSearchOpen }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { setIsCartOpen, totalItems } = useCart();
   const { user, openAuthModal } = useAuth();
+  const { totalItems: wishlistCount } = useWishlist();
   const router = useRouter();
 
   useEffect(() => {
@@ -29,6 +35,12 @@ export default function Header() {
       router.push('/dashboard');
     } else {
       openAuthModal();
+    }
+  };
+
+  const handleSearchClick = () => {
+    if (onSearchOpen) {
+      onSearchOpen();
     }
   };
 
@@ -50,9 +62,26 @@ export default function Header() {
           </nav>
 
           {/* Icons */}
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden md:flex items-center space-x-5">
             <ThemeToggle />
-            <button aria-label="Search" className="hover:text-primary transition-colors"><Search size={20} strokeWidth={1.5} /></button>
+            <button
+              aria-label="Search"
+              onClick={handleSearchClick}
+              className="hover:text-primary transition-colors relative group"
+            >
+              <Search size={20} strokeWidth={1.5} />
+              <span className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[9px] tracking-wider text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                ⌘K
+              </span>
+            </button>
+            <Link href="/wishlist" aria-label="Wishlist" className="relative hover:text-primary transition-colors">
+              <Heart size={20} strokeWidth={1.5} />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold">
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
             <button aria-label="Account" onClick={handleAccountClick} className="relative hover:text-primary transition-colors group">
               <User size={20} strokeWidth={1.5} />
               {user && (
@@ -72,6 +101,14 @@ export default function Header() {
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center space-x-4">
             <ThemeToggle />
+            <Link href="/wishlist" aria-label="Wishlist" className="relative hover:text-primary transition-colors">
+              <Heart size={20} strokeWidth={1.5} />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold">
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
             <button aria-label="Account" onClick={handleAccountClick} className="relative hover:text-primary transition-colors">
               <User size={20} strokeWidth={1.5} />
               {user && (
@@ -104,7 +141,7 @@ export default function Header() {
           <Link href="/categories/rings" className="text-sm tracking-widest hover:text-primary transition-colors">RINGS</Link>
           <Link href="/categories/necklaces" className="text-sm tracking-widest hover:text-primary transition-colors">NECKLACES</Link>
           <div className="flex space-x-6 pt-4 border-t border-border">
-            <button aria-label="Search"><Search size={20} strokeWidth={1.5} /></button>
+            <button onClick={handleSearchClick} aria-label="Search"><Search size={20} strokeWidth={1.5} /></button>
           </div>
         </motion.div>
       )}
