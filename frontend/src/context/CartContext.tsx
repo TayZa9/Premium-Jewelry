@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export interface CartItem {
   id: string; // product ID
+  slug: string; // product slug for backend trust-checks
   sku: string;
   name: string;
   price: string | number; // numeric or string that can be parsed

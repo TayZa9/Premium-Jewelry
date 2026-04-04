@@ -173,7 +173,7 @@ export default function DashboardPage() {
   const showToast = (msg: string) => setToast(msg);
 
   const handleReorder = (item: Order['items'][0]) => {
-    addItem({ id: item.slug, sku: item.sku, name: item.name, price: item.price, image: item.image, quantity: 1 });
+    addItem({ id: item.slug, slug: item.slug, sku: item.sku, name: item.name, price: item.price, image: item.image, quantity: 1 });
     showToast(`${item.name} added to cart ✓`);
   };
 

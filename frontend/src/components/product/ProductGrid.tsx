@@ -17,7 +17,7 @@ interface Product {
   isFeatured?: boolean;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API_URL = '/api';
 
 const MOCK_PRODUCTS: Product[] = [
   { id: '1', name: 'Emerald Cut Diamond Ring', price: 12500, images: ['/images/ring.png'], slug: 'emerald-cut-diamond-ring', category: { name: 'Rings', slug: 'rings' }, material: 'White Gold', gemstone: 'Diamond' },
@@ -46,7 +46,7 @@ export default function ProductGrid({ filters }: { filters?: FilterState }) {
           if (max) params.set('maxPrice', max);
         }
 
-        const res = await fetch(`${API_URL}/api/products?${params.toString()}`);
+        const res = await fetch(`${API_URL}/products?${params.toString()}`);
         if (res.ok) {
           const data = await res.json();
           setProducts(data);

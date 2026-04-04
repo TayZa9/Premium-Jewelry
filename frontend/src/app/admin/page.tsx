@@ -41,7 +41,7 @@ interface Stats {
   products: number; orders: number; revenue: number; lowStock: number;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API_URL = '/api';
 
 // ─── MOCK DATA (used when backend has no data) ───────────
 const MOCK_STATS: Stats = { products: 6, orders: 12, revenue: 156200, lowStock: 2 };
@@ -79,10 +79,12 @@ const STATUS_COLORS: Record<string, string> = {
   DELIVERED: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
 };
 
+const headers = { 'Content-Type': 'application/json' };
+
 // ─── MAIN COMPONENT ───────────────────────────────────────
 export default function AdminPage() {
   const router = useRouter();
-  const { user, token, logout, isLoading: authLoading, openAuthModal } = useAuth();
+  const { user, logout, isLoading: authLoading, openAuthModal } = useAuth();
 
   const [tab, setTab] = useState<Tab>('overview');
   const [stats, setStats] = useState<Stats>(MOCK_STATS);
@@ -104,7 +106,6 @@ export default function AdminPage() {
   });
   const [uploading, setUploading] = useState(false);
 
-  const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` };
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -121,14 +122,14 @@ export default function AdminPage() {
 
   // Load data
   const loadData = useCallback(async () => {
-    if (!token) return;
+    if (!user) return;
     setIsLoading(true);
     try {
       const [statsRes, productsRes, ordersRes, catsRes] = await Promise.all([
-        fetch(`${API_URL}/api/admin/stats`, { headers }).catch(() => null),
-        fetch(`${API_URL}/api/admin/products`, { headers }).catch(() => null),
-        fetch(`${API_URL}/api/admin/orders`, { headers }).catch(() => null),
-        fetch(`${API_URL}/api/admin/categories`, { headers }).catch(() => null),
+        fetch(`${API_URL}/admin/stats`, { headers }).catch(() => null),
+        fetch(`${API_URL}/admin/products`, { headers }).catch(() => null),
+        fetch(`${API_URL}/admin/orders`, { headers }).catch(() => null),
+        fetch(`${API_URL}/admin/categories`, { headers }).catch(() => null),
       ]);
 
       if (statsRes?.ok) setStats(await statsRes.json());
@@ -140,11 +141,11 @@ export default function AdminPage() {
       if (catsRes?.ok) setCategories(await catsRes.json());
     } catch {}
     setIsLoading(false);
-  }, [token]);
-
-  useEffect(() => {
-    if (user?.role === 'ADMIN' && token) loadData();
-  }, [user, token, loadData]);
+    }, [user, headers]); // Added headers as potentially stable or included
+  
+    useEffect(() => {
+      if (user?.role === 'ADMIN') loadData();
+    }, [user, loadData]);
 
   // Product form helpers
   const openNewProduct = () => {
@@ -172,9 +173,8 @@ export default function AdminPage() {
     try {
       const formData = new FormData();
       formData.append('image', file);
-      const res = await fetch(`${API_URL}/api/admin/upload`, {
+      const res = await fetch(`${API_URL}/admin/upload`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
       if (res.ok) {
@@ -201,8 +201,8 @@ export default function AdminPage() {
     try {
       const method = productModal === 'new' ? 'POST' : 'PUT';
       const url = productModal === 'new'
-        ? `${API_URL}/api/admin/products`
-        : `${API_URL}/api/admin/products/${(productModal as Product).id}`;
+        ? `${API_URL}/admin/products`
+        : `${API_URL}/admin/products/${(productModal as Product).id}`;
 
       const res = await fetch(url, {
         method,
@@ -225,7 +225,7 @@ export default function AdminPage() {
 
   const deleteProduct = async (id: string) => {
     try {
-      const res = await fetch(`${API_URL}/api/admin/products/${id}`, {
+      const res = await fetch(`${API_URL}/admin/products/${id}`, {
         method: 'DELETE', headers,
       });
       if (res.ok) {
@@ -240,8 +240,10 @@ export default function AdminPage() {
 
   const toggleFeatured = async (id: string) => {
     try {
-      const res = await fetch(`${API_URL}/api/admin/products/${id}/featured`, {
-        method: 'PATCH', headers,
+      const res = await fetch(`${API_URL}/admin/products/${id}`, {
+        method: 'PATCH', 
+        headers,
+        body: JSON.stringify({ featured: !products.find(p => p.id === id)?.isFeatured })
       });
       if (res.ok) {
         const updated = await res.json();
@@ -255,7 +257,7 @@ export default function AdminPage() {
 
   const updateOrderStatus = async (orderId: string, status: string) => {
     try {
-      const res = await fetch(`${API_URL}/api/admin/orders/${orderId}/status`, {
+      const res = await fetch(`${API_URL}/admin/orders/${orderId}`, {
         method: 'PATCH', headers,
         body: JSON.stringify({ status }),
       });

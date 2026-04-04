@@ -16,7 +16,7 @@ interface SearchResult {
   category?: { name: string };
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API_URL = '/api';
 const RECENT_KEY = 'aura-recent-searches';
 
 export default function CommandKSearch({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
@@ -74,10 +74,10 @@ export default function CommandKSearch({ isOpen, onClose }: { isOpen: boolean; o
     const timer = setTimeout(async () => {
       setIsSearching(true);
       try {
-        const res = await fetch(`${API_URL}/api/products/search?q=${encodeURIComponent(query)}`);
+        const res = await fetch(`${API_URL}/products/search?q=${encodeURIComponent(query)}`);
         if (res.ok) {
           const data = await res.json();
-          setResults(data);
+          setResults(data.products || []);
         }
       } catch {
         // Fallback: no results if API is down

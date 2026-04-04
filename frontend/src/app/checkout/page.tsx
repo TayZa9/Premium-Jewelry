@@ -59,16 +59,11 @@ export default function CheckoutPage() {
       return;
     }
     
-    const token = localStorage.getItem('token');
+    const apiUrl = '/api';
     
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-    
-    fetch(`${apiUrl}/api/payments/create-intent`, {
+    fetch(`${apiUrl}/payments/intent`, {
       method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ items })
     })
       .then(async res => {
@@ -83,8 +78,6 @@ export default function CheckoutPage() {
       })
       .catch(err => {
         console.error('Payment Error:', err);
-        // We could set a global error state here to show the user.
-        // For now, let's at least ensure we don't wait forever.
       });
 
   }, [items, router]);

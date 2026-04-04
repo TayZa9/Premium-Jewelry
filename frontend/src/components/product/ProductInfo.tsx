@@ -9,6 +9,7 @@ import WishlistButton from '@/components/wishlist/WishlistButton';
 interface ProductInfoProps {
   product: {
     id: string;
+    slug: string;
     name: string;
     price: string;
     description: string;
@@ -27,6 +28,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
     setIsAdding(true);
     addItem({
       id: product.id,
+      slug: product.slug,
       sku: product.sku,
       name: product.name,
       price: product.price,

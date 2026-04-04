@@ -17,6 +17,7 @@ export default function WishlistPage() {
   const handleAddToCart = (product: typeof items[0]) => {
     addItem({
       id: product.id,
+      slug: product.slug,
       sku: product.id,
       name: product.name,
       price: product.price,

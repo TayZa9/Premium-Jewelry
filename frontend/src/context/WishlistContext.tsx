@@ -25,22 +25,21 @@ interface WishlistContextType {
 
 const WishlistContext = createContext<WishlistContextType | undefined>(undefined);
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+// API endpoint is now local to the Next.js app
+const API_URL = '/api';
 const LOCAL_KEY = 'aura-wishlist';
 
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<WishlistProduct[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { user, token } = useAuth();
+  const { user } = useAuth();
 
   // Load wishlist: from backend if authenticated, localStorage otherwise
   useEffect(() => {
     const load = async () => {
-      if (user && token && !token.startsWith('mock-')) {
+      if (user) {
         try {
-          const res = await fetch(`${API_URL}/api/wishlist`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          const res = await fetch(`${API_URL}/wishlist`);
           if (res.ok) {
             const data = await res.json();
             setItems(data.map((item: any) => item.product));
@@ -63,7 +62,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(false);
     };
     load();
-  }, [user, token]);
+  }, [user]);
 
   // Persist to localStorage whenever items change
   useEffect(() => {
@@ -79,29 +78,27 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     });
 
     // Sync to backend if authenticated
-    if (token && !token.startsWith('mock-')) {
-      fetch(`${API_URL}/api/wishlist`, {
+    if (user) {
+      fetch(`${API_URL}/wishlist`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ productId: product.id }),
       }).catch(() => {});
     }
-  }, [token]);
+  }, [user]);
 
   const removeFromWishlist = useCallback((productId: string) => {
     setItems(prev => prev.filter(p => p.id !== productId));
 
     // Sync to backend if authenticated
-    if (token && !token.startsWith('mock-')) {
-      fetch(`${API_URL}/api/wishlist/${productId}`, {
+    if (user) {
+      fetch(`${API_URL}/wishlist?productId=${productId}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
       }).catch(() => {});
     }
-  }, [token]);
+  }, [user]);
 
   const isInWishlist = useCallback(
     (productId: string) => items.some(p => p.id === productId),
