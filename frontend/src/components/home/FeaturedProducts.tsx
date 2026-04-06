@@ -2,29 +2,10 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { FALLBACK_PRODUCTS, formatPrice } from '@/lib/catalog';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import WishlistButton from '@/components/wishlist/WishlistButton';
-
-const MOCK_FEATURED = [
-  {
-    id: '1',
-    name: 'The Emerald Cut Diamond Ring',
-    price: '$12,500',
-    image: '/images/ring.png',
-    slug: 'emerald-cut-diamond-ring',
-    material: '18k White Gold',
-    gemstone: 'Diamond',
-  },
-  {
-    id: '2',
-    name: 'Minimalist Gold Pendant',
-    price: '$2,100',
-    image: '/images/necklace.png',
-    slug: 'minimalist-gold-pendant',
-    material: '18k Yellow Gold',
-  }
-];
 
 const staggerContainer = {
   hidden: {},
@@ -47,6 +28,7 @@ const staggerItem = {
 
 export default function FeaturedProducts() {
   const containerRef = useRef(null);
+  const featuredProducts = FALLBACK_PRODUCTS.filter((product) => product.isFeatured).slice(0, 2);
   
   return (
     <section ref={containerRef} className="py-32 bg-background relative z-10">
@@ -86,7 +68,7 @@ export default function FeaturedProducts() {
           viewport={{ once: true, margin: "-100px" }}
           className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-16"
         >
-          {MOCK_FEATURED.map((product, index) => {
+          {featuredProducts.map((product, index) => {
             const isEven = index % 2 === 0;
             return (
               <motion.div 
@@ -102,7 +84,7 @@ export default function FeaturedProducts() {
                       className="relative w-full h-full"
                     >
                       <Image
-                        src={product.image}
+                        src={product.images[0]}
                         alt={product.name}
                         fill
                         sizes="(max-width: 768px) 100vw, 50vw"
@@ -119,8 +101,8 @@ export default function FeaturedProducts() {
                             id: product.id,
                             name: product.name,
                             slug: product.slug,
-                            price: product.price,
-                            images: [product.image],
+                            price: formatPrice(product.price),
+                            images: product.images,
                             material: product.material,
                             gemstone: product.gemstone,
                           }}
@@ -131,7 +113,7 @@ export default function FeaturedProducts() {
                   </div>
                   <div className="text-center">
                     <h3 className="text-xl font-serif tracking-wide text-foreground mb-3 group-hover:text-gold transition-colors duration-300">{product.name}</h3>
-                    <p className="text-gray-400 font-sans tracking-widest text-sm">{product.price}</p>
+                    <p className="text-gray-400 font-sans tracking-widest text-sm">{formatPrice(product.price)}</p>
                   </div>
                 </Link>
               </motion.div>

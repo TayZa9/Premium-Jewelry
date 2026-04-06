@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { searchFallbackProducts } from '@/lib/catalog';
 import prisma from '@/lib/prisma';
 
 export async function GET(req: NextRequest) {
@@ -26,9 +27,13 @@ export async function GET(req: NextRequest) {
       take: 10
     });
 
+    if (products.length === 0) {
+      return NextResponse.json({ products: searchFallbackProducts(query) });
+    }
+
     return NextResponse.json({ products });
   } catch (error) {
     console.error('Search API Error:', error);
-    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ products: searchFallbackProducts(query) });
   }
 }

@@ -82,7 +82,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
               product={{
                 id: product.id,
                 name: product.name,
-                slug: '',
+                slug: product.slug,
                 price: product.price,
                 images: product.images,
                 material: product.material,

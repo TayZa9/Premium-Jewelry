@@ -1,5 +1,6 @@
 import ProductImageGallery from '@/components/product/ProductImageGallery';
 import ProductInfo from '@/components/product/ProductInfo';
+import { findFallbackProductBySlug, formatPrice } from '@/lib/catalog';
 import { notFound } from 'next/navigation';
 
 export const metadata = {
@@ -8,25 +9,43 @@ export const metadata = {
 
 import prisma from '@/lib/prisma';
 
+function toProductDetail(product: {
+  id: string;
+  slug: string;
+  name: string;
+  description?: string | null;
+  material?: string | null;
+  gemstone?: string | null;
+  sku: string;
+  images: string[];
+  price: number | { toString(): string };
+}) {
+  return {
+    ...product,
+    description: product.description || '',
+    material: product.material || 'Premium Gold',
+    price: formatPrice(Number(product.price)),
+    gemstone: product.gemstone || undefined,
+  };
+}
+
 async function getProduct(slug: string) {
+  const fallbackProduct = findFallbackProductBySlug(slug);
+
   try {
     const product = await prisma.product.findUnique({
       where: { slug },
       include: { category: true }
     });
 
-    if (!product) return null;
+    if (!product) {
+      return fallbackProduct ? toProductDetail(fallbackProduct) : null;
+    }
     
-    return {
-      ...product,
-      description: product.description || '',
-      material: product.material || 'Premium Gold',
-      price: `$${Number(product.price).toLocaleString()}`,
-      gemstone: product.gemstone || undefined
-    };
+    return toProductDetail(product);
   } catch (error) {
     console.error('Error fetching product:', error);
-    return null;
+    return fallbackProduct ? toProductDetail(fallbackProduct) : null;
   }
 }
 

@@ -20,7 +20,7 @@ export default function CategoryPage() {
              Every piece in our {formattedCategory || 'curated'} collection is a testament to the AURA tradition of excellence.
           </p>
         </div>
-        <ProductGrid />
+        <ProductGrid categorySlug={category} />
       </div>
     </div>
   );

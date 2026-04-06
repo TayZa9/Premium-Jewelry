@@ -1,17 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { filterFallbackProducts } from '@/lib/catalog';
 import prisma from '@/lib/prisma';
 
 export async function GET(req: NextRequest) {
-  try {
-    const { searchParams } = new URL(req.url);
-    const material = searchParams.get('material');
-    const gemstone = searchParams.get('gemstone');
-    const categoryId = searchParams.get('categoryId');
-    const sort = searchParams.get('sort');
-    const minPrice = searchParams.get('minPrice');
-    const maxPrice = searchParams.get('maxPrice');
-    const featured = searchParams.get('featured');
+  const { searchParams } = new URL(req.url);
+  const material = searchParams.get('material');
+  const gemstone = searchParams.get('gemstone');
+  const categoryId = searchParams.get('categoryId');
+  const categorySlug = searchParams.get('categorySlug');
+  const sort = searchParams.get('sort');
+  const minPrice = searchParams.get('minPrice');
+  const maxPrice = searchParams.get('maxPrice');
+  const featured = searchParams.get('featured');
 
+  try {
     const where: any = {};
 
     if (material) {
@@ -24,6 +26,9 @@ export async function GET(req: NextRequest) {
     }
     if (categoryId) {
       where.categoryId = categoryId;
+    }
+    if (categorySlug) {
+      where.category = { slug: categorySlug };
     }
     if (featured === 'true') {
       where.isFeatured = true;
@@ -47,9 +52,17 @@ export async function GET(req: NextRequest) {
       take: featured === 'true' ? 4 : undefined,
     });
 
+    if (products.length === 0) {
+      return NextResponse.json(
+        filterFallbackProducts({ material, gemstone, categoryId, categorySlug, sort, minPrice, maxPrice, featured })
+      );
+    }
+
     return NextResponse.json(products);
   } catch (error) {
     console.error('Error fetching products:', error);
-    return NextResponse.json({ message: 'Server Error' }, { status: 500 });
+    return NextResponse.json(
+      filterFallbackProducts({ material, gemstone, categoryId, categorySlug, sort, minPrice, maxPrice, featured })
+    );
   }
 }

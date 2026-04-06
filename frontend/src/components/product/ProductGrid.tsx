@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { filterFallbackProducts } from '@/lib/catalog';
 import ProductCard from './ProductCard';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { FilterState } from './ProductFilters';
@@ -19,16 +20,7 @@ interface Product {
 
 const API_URL = '/api';
 
-const MOCK_PRODUCTS: Product[] = [
-  { id: '1', name: 'Emerald Cut Diamond Ring', price: 12500, images: ['/images/ring.png'], slug: 'emerald-cut-diamond-ring', category: { name: 'Rings', slug: 'rings' }, material: 'White Gold', gemstone: 'Diamond' },
-  { id: '2', name: 'Minimalist Gold Pendant', price: 2100, images: ['/images/necklace.png'], slug: 'minimalist-gold-pendant', category: { name: 'Necklaces', slug: 'necklaces' }, material: 'Yellow Gold' },
-  { id: '3', name: 'Classic Solitaire Ring', price: 8200, images: ['/images/ring.png'], slug: 'classic-solitaire-ring', category: { name: 'Rings', slug: 'rings' }, material: 'Platinum', gemstone: 'Diamond' },
-  { id: '4', name: 'Vintage Pearl Necklace', price: 3400, images: ['/images/necklace.png'], slug: 'vintage-pearl-necklace', category: { name: 'Necklaces', slug: 'necklaces' }, material: 'Yellow Gold', gemstone: 'Pearl' },
-  { id: '5', name: 'Sapphire Halo Ring', price: 6800, images: ['/images/ring.png'], slug: 'sapphire-halo-ring', category: { name: 'Rings', slug: 'rings' }, material: 'White Gold', gemstone: 'Sapphire' },
-  { id: '6', name: 'Diamond Tennis Necklace', price: 24000, images: ['/images/necklace.png'], slug: 'diamond-tennis-necklace', category: { name: 'Necklaces', slug: 'necklaces' }, material: 'White Gold', gemstone: 'Diamond' },
-];
-
-export default function ProductGrid({ filters }: { filters?: FilterState }) {
+export default function ProductGrid({ filters, categorySlug }: { filters?: FilterState; categorySlug?: string }) {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -39,6 +31,7 @@ export default function ProductGrid({ filters }: { filters?: FilterState }) {
         const params = new URLSearchParams();
         if (filters?.materials.length) params.set('material', filters.materials.join(','));
         if (filters?.gemstones.length) params.set('gemstone', filters.gemstones.join(','));
+        if (categorySlug) params.set('categorySlug', categorySlug);
         if (filters?.sort) params.set('sort', filters.sort);
         if (filters?.priceRange) {
           const [min, max] = filters.priceRange.split('-');
@@ -57,30 +50,22 @@ export default function ProductGrid({ filters }: { filters?: FilterState }) {
         // Fallback to mock data
       }
 
-      // Apply local filtering to mock data
-      let filtered = [...MOCK_PRODUCTS];
-      if (filters?.materials.length) {
-        filtered = filtered.filter(p => p.material && filters.materials.some(m => p.material?.toLowerCase().includes(m.toLowerCase())));
-      }
-      if (filters?.gemstones.length) {
-        filtered = filtered.filter(p => p.gemstone && filters.gemstones.some(g => p.gemstone?.toLowerCase().includes(g.toLowerCase())));
-      }
-      if (filters?.priceRange) {
-        const [min, max] = filters.priceRange.split('-').map(Number);
-        filtered = filtered.filter(p => {
-          const price = typeof p.price === 'number' ? p.price : parseFloat(String(p.price).replace(/[$,]/g, ''));
-          return price >= min && price <= max;
-        });
-      }
-      if (filters?.sort === 'price-asc') filtered.sort((a, b) => Number(a.price) - Number(b.price));
-      else if (filters?.sort === 'price-desc') filtered.sort((a, b) => Number(b.price) - Number(a.price));
+      const [min, max] = filters?.priceRange ? filters.priceRange.split('-') : ['', ''];
+      const filtered = filterFallbackProducts({
+        material: filters?.materials.length ? filters.materials.join(',') : null,
+        gemstone: filters?.gemstones.length ? filters.gemstones.join(',') : null,
+        categorySlug: categorySlug ?? null,
+        sort: filters?.sort ?? null,
+        minPrice: min || null,
+        maxPrice: max || null,
+      });
 
       setProducts(filtered);
       setIsLoading(false);
     };
 
     fetchProducts();
-  }, [filters]);
+  }, [filters, categorySlug]);
 
   // Loading skeleton
   if (isLoading) {
